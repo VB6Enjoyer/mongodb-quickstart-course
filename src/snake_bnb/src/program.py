@@ -1,24 +1,47 @@
-from colorama import Fore
-import program_guests
-import program_hosts
-import data.mongo_setup as mongo_setup
+"""
+Application entry point for Snake BnB.
+
+This module:
+- Initializes the MongoEngine connection (via data.mongo_setup.global_init).
+- Prints a stylized application header.
+- Enters the main loop to determine user intent (guest vs host) and
+  dispatches to the appropriate mode controller (program_guests or program_hosts).
+"""
+
+from colorama import Fore # Colored terminal text (foreground colors).
+import program_guests # Guest-facing workflows (booking cages, etc.).
+import program_hosts # Host-facing workflows (managing cages, bookings, etc.).
+import data.mongo_setup as mongo_setup # MongoEngine connection setup (alias 'core' -> 'snake_bnb').
 
 
+"""
+Initialize the app and dispatch to guest/host flows in a loop.
+
+Steps:
+1) Initialize the database connection so models using db_alias='core' bind correctly.
+2) Print the application header (title + ASCII art).
+3) In a loop:
+    - Ask the user whether they are a guest or a host.
+    - Run the respective program flow until it returns (user switches mode or exits).
+4) Exit gracefully on Ctrl+C (KeyboardInterrupt).
+"""
 def main():
-    mongo_setup.global_init()
+    mongo_setup.global_init() # Register the MongoEngine connection alias 'core' for the 'snake_bnb' database.
 
-    print_header()
+    print_header() # Show the app header and welcome copy.
 
     try:
+        # Main interaction loop: decide intent and delegate to the correct mode.
         while True:
             if find_user_intent() == 'book':
-                program_guests.run()
+                program_guests.run() # Guest (book a cage) path.
             else:
-                program_hosts.run()
+                program_hosts.run() # Host (offer cage space) path.
     except KeyboardInterrupt:
-        return
+        return # Allow clean termination with Ctrl+C without a stack trace.
 
 
+"""Render the application banner and a short welcome message."""
 def print_header():
     snake = \
         """
@@ -50,16 +73,25 @@ OI??????????I$$M=,:+7??I$7I???????????
     print()
 
 
+"""
+Ask the user whether they are a guest or a host and return an intent token.
+
+Returns:
+    str: 'book' for guests or 'offer' for hosts.
+"""
 def find_user_intent():
     print("[g] Book a cage for your snake")
     print("[h] Offer extra cage space")
     print()
+    
     choice = input("Are you a [g]uest or [h]ost? ")
+    
+    # Host chooses 'h'; any other input defaults to guest 'book' flow to reduce friction.
     if choice == 'h':
         return 'offer'
 
     return 'book'
 
-
+# Standard Python entry-point guard.
 if __name__ == '__main__':
     main()
