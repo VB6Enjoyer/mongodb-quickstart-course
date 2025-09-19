@@ -13,7 +13,6 @@ import program_guests # Guest-facing workflows (booking cages, etc.).
 import program_hosts # Host-facing workflows (managing cages, bookings, etc.).
 import data.mongo_setup as mongo_setup # MongoEngine connection setup (alias 'core' -> 'snake_bnb').
 
-
 """
 Initialize the app and dispatch to guest/host flows in a loop.
 
@@ -39,7 +38,6 @@ def main():
                 program_hosts.run() # Host (offer cage space) path.
     except KeyboardInterrupt:
         return # Allow clean termination with Ctrl+C without a stack trace.
-
 
 """Render the application banner and a short welcome message."""
 def print_header():
@@ -71,7 +69,6 @@ OI??????????I$$M=,:+7??I$7I???????????
     print("Welcome to Snake BnB!")
     print("Why are you here?")
     print()
-
 
 """
 Ask the user whether they are a guest or a host and return an intent token.

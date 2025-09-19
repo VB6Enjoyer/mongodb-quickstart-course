@@ -1,7 +1,6 @@
 import uuid
 from typing import Callable, Any, Optional
 
-
 class switch:
     """
         python-switch is a module-level implementation of the switch statement for Python.
